@@ -1,8 +1,9 @@
-require('./initializers');
+require('./config');
 
 const express = require('express');
 // express cluster
 const bodyParser = require('body-parser');
+const logger = require('./config/logger');
 const routes = require('./routes');
 
 
@@ -19,8 +20,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(routes);
 
 app.listen(app.get('port'), () => {
-  console.log('App is running at http://localhost:%d in %s mode', app.get('port'), app.get('env'));
-  console.log('  Press CTRL-C to stop\n');
+  logger.info('App is running at http://localhost:%d in %s mode', app.get('port'), app.get('env'));
+  logger.info('  Press CTRL-C to stop\n');
 });
 
 exports = app;

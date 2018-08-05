@@ -1,7 +1,8 @@
 const app = module.exports = require('express')();
-const boom = require('boom');
+const Boom = require('boom');
+const Joi = require('joi');
 const asyncWrap = require('./asyncMiddleware');
-const { randomCalvinQuote, searchCalvinQuote, asyncerror, rejectMe, justThrowIt } = require('../actions/cnh');
+const { randomCalvinQuote, searchCalvinQuote, asyncerror, rejectMe, justThrowIt, enqueueJob } = require('../actions/cnh');
 
 app.get('/random', asyncWrap(async (req, res) => {
   const quote = await randomCalvinQuote();
@@ -9,9 +10,13 @@ app.get('/random', asyncWrap(async (req, res) => {
 }));
 
 app.post('/search', asyncWrap(async (req, res) => {
+  const validation = Joi.validate(req.body, searchSchema);
+  if (validation.error) {
+    throw Boom.badRequest(validation.error.details[0].message, validation.error.details[0]);
+  }
   const quote = await searchCalvinQuote(req.body.term);
   if (!quote) {
-    throw boom.notFound('a quote matching your search could not be found');
+    throw Boom.notFound('a quote matching your search could not be found');
   }
   res.status(200).send(quote);
 }));
@@ -30,3 +35,13 @@ app.get('/justthrowit', asyncWrap(async (req, res) => {
   await justThrowIt();
   res.status(200).send('this will not be sent');
 }));
+
+app.post('/enqueuejob', asyncWrap(async (req, res) => {
+  enqueueJob(req.body);
+  res.status(200).send('job enqueued');
+}));
+
+
+const searchSchema = Joi.object().keys({
+  term: Joi.string().alphanum().min(3).required(),
+});

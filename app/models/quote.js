@@ -4,12 +4,11 @@ const { Schema } = mongoose;
 
 const quoteSchema = new Schema({
   body: String,
-  size: {
-    type: String,
-    enum: ['sm', 'md', 'lg'],
-    default: 'lg',
+  stripNumber: String,
+  favCount: {
+    type: Number,
+    default: 0,
   },
-  rating: Number,
 });
 
 mongoose.model('Quote', quoteSchema);

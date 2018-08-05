@@ -1,5 +1,5 @@
 const app = module.exports = require('express')();
-const boom = require('boom');
+const Boom = require('boom');
 const jwt = require('express-jwt');
 
 // Mount routes under namespace
@@ -20,13 +20,13 @@ app.all('*', (req, res) => {
 // top level error handler
 app.use((err, _req, res, _next) => {
   let responseErr = err;
-  if (!responseErr.isBoom) {
+  if (!Boom.isBoom(responseErr)) {
     // error thrown by something I'm not controlling, like jwt
-    responseErr = boom.boomify(responseErr, { statusCode: responseErr.status });
+    responseErr = Boom.boomify(responseErr, { statusCode: responseErr.status });
   }
   if (responseErr.isServer) {
-    console.log(responseErr);
     // log the error... or don't
   }
-  return res.status(responseErr.output.statusCode).json(responseErr.output.payload);
+  return res.status(responseErr.output.statusCode)
+    .json(Object.assign(responseErr.output.payload, { data: responseErr.data }));
 });

@@ -2,8 +2,9 @@
 // Ours will be much more complicated. e.g. call this service and then call another
 // service with that response data then compute some stuff and return the result.
 
-const boom = require('boom');
+const Boom = require('boom');
 const calvinQuoter = require('../services/calvinQuoter');
+const QuoteFavJob = require('../jobs/quoteFav');
 
 const timeout = (ms) => {
   return new Promise(resolve => setTimeout(resolve('this is a test'), ms));
@@ -20,7 +21,7 @@ exports.searchCalvinQuote = (term) => {
 exports.asyncerror = async () => {
   // do some things that are async and throw an exception
   const test = await timeout(3000);
-  if (test === 'this is a test') throw boom.teapot('testing a throw from action');
+  if (test === 'this is a test') throw Boom.teapot('testing a throw from action');
 };
 
 exports.rejectMe = async () => {
@@ -31,4 +32,8 @@ exports.rejectMe = async () => {
 exports.justThrowIt = async () => {
   await timeout(3000);
   calvinQuoter.justThrowIt();
+};
+
+exports.enqueueJob = async (data) => {
+  QuoteFavJob.enqueue(data);
 };

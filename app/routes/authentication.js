@@ -1,5 +1,4 @@
 const app = module.exports = require('express')();
-const boom = require('boom');
 const asyncWrap = require('./asyncMiddleware');
 const { signIn } = require('../actions/authentication');
 
