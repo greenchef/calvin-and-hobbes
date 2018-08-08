@@ -1,7 +1,9 @@
 {
     "extends": "airbnb-base",
     "rules": {
-    	"no-multi-assign": "off"
+        "no-multi-assign": "off",
+        "arrow-body-style": "off",
+        "object-curly-newline": "off"
     }
     
 }

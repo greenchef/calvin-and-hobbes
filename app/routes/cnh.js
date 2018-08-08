@@ -2,7 +2,12 @@ const app = module.exports = require('express')();
 const Boom = require('boom');
 const Joi = require('joi');
 const asyncWrap = require('./asyncMiddleware');
+const permit = require('./permission');
 const { randomCalvinQuote, searchCalvinQuote, asyncerror, rejectMe, justThrowIt, enqueueJob } = require('../actions/cnh');
+
+const searchSchema = Joi.object().keys({
+  term: Joi.string().alphanum().min(3).required(),
+});
 
 app.get('/random', asyncWrap(async (req, res) => {
   const quote = await randomCalvinQuote();
@@ -22,12 +27,12 @@ app.post('/search', asyncWrap(async (req, res) => {
 }));
 
 app.get('/asyncerror', asyncWrap(async (req, res) => {
-  const unhandledErr = await asyncerror();
+  await asyncerror();
   res.status(200).send('this will not be sent');
 }));
 
 app.get('/rejectme', asyncWrap(async (req, res) => {
-  const unhandledErr = await rejectMe();
+  await rejectMe();
   res.status(200).send('this will not be sent');
 }));
 
@@ -41,7 +46,10 @@ app.post('/enqueuejob', asyncWrap(async (req, res) => {
   res.status(200).send('job enqueued');
 }));
 
+app.get('/protected', permit('fancyClaim'), asyncWrap(async (req, res) => {
+  res.status(200).send('You have permission');
+}));
 
-const searchSchema = Joi.object().keys({
-  term: Joi.string().alphanum().min(3).required(),
-});
+app.get('/nobody', permit('nobodyHasMe'), asyncWrap(async (req, res) => {
+  res.status(200).send('You have permission');
+}));

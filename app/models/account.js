@@ -24,6 +24,10 @@ const AccountSchema = new Schema({
   },
 }, { timestamps: true });
 
+AccountSchema.virtual('clearanceLevels').get(() => {
+  return ['fancyClaim', 'otherClaim'];
+});
+
 AccountSchema.pre('save', function presave(next) {
   if (!this.isModified('password')) return next();
   const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
@@ -42,6 +46,7 @@ AccountSchema.methods = {
     return jwt.sign({
       id: this.id,
       email: this.email,
+      clearanceLevels: this.clearanceLevels,
     },
     process.env.JWT_SECRET,
     { expiresIn: 1000 * 60 });
