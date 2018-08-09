@@ -36,3 +36,14 @@
 * Joi - Object schema validator for req params and job params.
 * dotenv - env variables in a single file.  Accessed through process.env within the application.
 * RabbitMQ - for messaging and to task workers with a job.
+
+
+#### Links
+* Joi - https://github.com/hapijs/joi
+* Boom - https://github.com/hapijs/boom
+* RabbitMQ - https://www.rabbitmq.com/tutorials/tutorial-one-javascript.html
+* Bunyan - https://github.com/trentm/node-bunyan
+
+#### Seed DB
+Drop your db first then run  
+node ./app/db/seed.js
