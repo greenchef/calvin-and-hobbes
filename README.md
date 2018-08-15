@@ -18,6 +18,7 @@
 
 #### Models
 * They're models you know the deal.
+* Should only act upon them selves or inner classes.
 * Don't pull in other models into models unless they are true inner class type relationships.
 
 
